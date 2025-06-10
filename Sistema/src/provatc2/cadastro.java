@@ -3,10 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package provatc2;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+
 
 /**
  *
- * @author fernando.bryan
+ * @author tibd8
  */
 public class cadastro extends javax.swing.JFrame {
 
@@ -41,8 +44,6 @@ public class cadastro extends javax.swing.JFrame {
         menuCadastro = new javax.swing.JMenu();
         menuConsulta = new javax.swing.JMenu();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jButton1.setText("Conectar");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -66,6 +67,11 @@ public class cadastro extends javax.swing.JFrame {
         btInserir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btInserirMouseClicked(evt);
+            }
+        });
+        btInserir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btInserirActionPerformed(evt);
             }
         });
 
@@ -112,8 +118,7 @@ public class cadastro extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jlConexao, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 137, Short.MAX_VALUE))
+                        .addComponent(jlConexao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jlPreco, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -125,7 +130,7 @@ public class cadastro extends javax.swing.JFrame {
                                 .addComponent(btInserir)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton3)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addGap(0, 171, Short.MAX_VALUE))
                             .addComponent(tfpreco)
                             .addComponent(tfdescricao)
                             .addComponent(tfcodigo))))
@@ -177,17 +182,48 @@ public class cadastro extends javax.swing.JFrame {
 
     private void btInserirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btInserirMouseClicked
         Dados d = new Dados();
-        if(d.conectar("localhost","loja","root","")) {
-            jlConexao.setText("Conectado!");
-            String campos = tfcodigo.getText() + ",'" + tfdescricao.getText() + "'," + tfpreco.getText();
-            if(d.inserir("produtos","codigo,descricao,valor",campos)) {
-                jlConexao.setText("Inserido com sucesso!");
+
+if (d.conectar("localhost", "loja", "root", "")) {
+    jlConexao.setText("Conectado!");
+
+    String codigo = tfcodigo.getText().trim();
+    String descricao = tfdescricao.getText().trim();
+    String preco = tfpreco.getText().trim().replace(",", ".");
+
+    if (codigo.isEmpty() || descricao.isEmpty() || preco.isEmpty()) {
+        jlConexao.setText("Preencha todos os campos corretamente!");
+    } else {
+        try {
+            ResultSet rs = d.consultar("SELECT * FROM produtos WHERE codigo = " + codigo);
+            ResultSet max = d.consultar("SELECT MAX(codigo) AS ultimo FROM produtos");
+
+            if (rs != null && rs.next()) {
+                String ultimoCodigo = "";
+                if (max != null && max.next()) {
+                    ultimoCodigo = max.getString("ultimo");
+                }
+                jlConexao.setText("Código já cadastrado! Último cadastro foi: " + ultimoCodigo);
+                rs.close();
+                if (max != null) max.close();
             } else {
-                jlConexao.setText("ERRO PARA INSERIR!");
+                String campos = "codigo,descricao,valor";
+                String valores = codigo + ",'" + descricao + "'," + preco;
+
+                if (d.inserir("produtos", campos, valores)) {
+                    jlConexao.setText("Inserido com sucesso!");
+                } else {
+                    jlConexao.setText("ERRO AO INSERIR!");
+                }
             }
-        } else {
-            jlConexao.setText("ERRO PARA CONECTAR!");
+        } catch (SQLException e) {
+            jlConexao.setText("Erro ao consultar: " + e.getMessage());
         }
+    }
+} else {
+    jlConexao.setText("ERRO PARA CONECTAR!");
+}
+
+
     }//GEN-LAST:event_btInserirMouseClicked
 
     private void tfcodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfcodigoActionPerformed
@@ -208,6 +244,10 @@ public class cadastro extends javax.swing.JFrame {
         Pesquisa p = new Pesquisa();
         p.setVisible(true);        // TODO add your handling code here:
     }//GEN-LAST:event_menuConsultaMouseClicked
+
+    private void btInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btInserirActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btInserirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -240,6 +280,7 @@ public class cadastro extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                
                 new cadastro().setVisible(true);
             }
         });

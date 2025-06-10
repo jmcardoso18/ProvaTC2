@@ -38,7 +38,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jMenu3.setText("jMenu3");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridLayout());
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/provatc2/Imagem/logotipo.jpg"))); // NOI18N

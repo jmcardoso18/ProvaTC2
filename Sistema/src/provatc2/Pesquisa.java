@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author fernando.bryan
+ * @author tibd8
  */
 public class Pesquisa extends javax.swing.JFrame {
 
@@ -38,8 +38,6 @@ public class Pesquisa extends javax.swing.JFrame {
         menuPagInicial = new javax.swing.JMenu();
         menuCadastro = new javax.swing.JMenu();
         menuConsulta = new javax.swing.JMenu();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Produto:");
 

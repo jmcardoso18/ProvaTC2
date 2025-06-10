@@ -6,7 +6,7 @@ package provatc2;
 
 /**
  *
- * @author fernando.bryan
+ * @author tibd8
  */
 public class Sistema {
 

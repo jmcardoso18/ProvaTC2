@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 
 /**
  *
- * @author Fernando Bryan Frizzarin
+ * @author tibd8
  */
 public class Dados {
     
